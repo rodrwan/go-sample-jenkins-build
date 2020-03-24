@@ -11,15 +11,8 @@ pipeline {
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
 
+    tools { docker "mydocker"}
     stages {
-        stage('Initialize'){
-            steps{
-                script{
-                    def dockerHome = tool 'mydocker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                }
-            }
-        }
         stage('Build') {
             agent {
                 docker {
@@ -37,14 +30,6 @@ pipeline {
             }
         }
 
-        stage('Initialize2'){
-            steps{
-                script{
-                    def dockerHome = tool 'mydocker'
-                    env.PATH = "${dockerHome}/bin:${env.PATH}"
-                }
-            }
-        }
         stage('Build Docker Image'){
             steps{
                 sh "docker build -t ${IMAGE} ."
