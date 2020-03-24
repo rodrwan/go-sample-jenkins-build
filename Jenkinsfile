@@ -44,7 +44,7 @@ pipeline {
                 DOCKER_CREDENTIALS = credentials('my-docker-credentials-id')
             }
 
-            steps
+            steps{
                 // Use a scripted pipeline.
                 script {
                     node {
@@ -99,12 +99,6 @@ pipeline {
                 }
             }
         }
-        stage("Docker Purge") {
-            steps {
-                sh "docker image prune -fa"
-                deleteDir()
-            }
-        }
     }
 
     post
@@ -112,7 +106,9 @@ pipeline {
         always
         {
             // make sure that the Docker image is removed
-            sh "docker rmi ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} | true"
+            // sh "docker rmi ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} | true"
+            sh "docker image prune -fa"
+            deleteDir()
         }
     }
 
