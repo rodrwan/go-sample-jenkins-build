@@ -1,3 +1,11 @@
+node() {
+    def root = tool name: 'Go 1.9', type: 'go'
+
+    stage ('Compile') {
+        sh "${root}/bin/go build -o ${APP_NAME}"
+    }
+}
+
 pipeline {
     agent any
     environment{
@@ -8,19 +16,6 @@ pipeline {
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
     stages {
-        stage('Build application'){
-            // Install the desired Go version
-            node() {
-                def root = tool name: 'Go 1.9', type: 'go'
-
-                stage('Preparation') {
-                    checkout scm
-                }
-                stage ('Compile') {
-                    sh "${root}/bin/go build -o ${APP_NAME}"
-                }
-            }
-        }
         stage('Build Docker Image'){
             steps{
                 sh "docker build -t ${IMAGE} ."
