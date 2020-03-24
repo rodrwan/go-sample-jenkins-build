@@ -35,21 +35,53 @@ pipeline {
             }
         }
 
-        stage('Build Docker Image'){
-            steps{
-                sh "docker build . -t ${IMAGE}"
+        stage('Docker') {
+            environment {
+                // Extract the username and password of our credentials into "DOCKER_CREDENTIALS_USR" and "DOCKER_CREDENTIALS_PSW".
+                // (NOTE 1: DOCKER_CREDENTIALS will be set to "your_username:your_password".)
+                // The new variables will always be YOUR_VARIABLE_NAME + _USR and _PSW.
+                // (NOTE 2: You can't print credentials in the pipeline for security reasons.)
+                DOCKER_CREDENTIALS = credentials('my-docker-credentials-id')
             }
-        }
 
-        stage('Registry push'){
-            steps{
-                script{
-                    docker.withRegistry(ECRURL, ECRCRED) {
-                        docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
+            steps
+                // Use a scripted pipeline.
+                script {
+                    node {
+                        def app
+
+                        stage('Clone repository') {
+                            checkout scm
+                        }
+
+                        stage('Build image') {
+                            app = docker.build("${IMAGE}")
+                        }
+
+                        stage('Push image') {
+                            // Use the Credential ID of the Docker Hub Credentials we added to Jenkins.
+                            docker.withRegistry(ECRURL, ECRCRED) {
+                                // Push image and tag it with our build number for versioning purposes.
+                                app.push("${env.BUILD_NUMBER}")
+
+                                // Push the same image and tag it as the latest version (appears at the top of our version list).
+                                app.push("latest")
+                            }
+                        }
                     }
                 }
             }
         }
+
+        // stage('Registry push'){
+        //     steps{
+        //         script{
+        //             docker.withRegistry(ECRURL, ECRCRED) {
+        //                 docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Deploy to k8s'){
             steps{
