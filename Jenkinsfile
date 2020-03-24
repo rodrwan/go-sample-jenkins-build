@@ -65,9 +65,10 @@ pipeline {
                                 def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'", returnStdout: true
                                 echo "${imageID}"
                                 sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
-
-                                sh "docker tag $REGISTRY_URL:latest ${IMAGE}"
+                                echo "docker tag ${IMAGE} ${IMAGE}"
+                                sh "docker tag ${IMAGE} ${IMAGE}"
                                 docker.withRegistry(ECRURL, ECRCRED) {
+                                    echo "docker push ${IMAGE}"
                                     sh "docker push ${IMAGE}"
                                 //     docker.image(IMAGE).push()
                                 }
