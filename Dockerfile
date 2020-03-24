@@ -15,5 +15,6 @@ WORKDIR /usr/bin
 
 COPY --from=builder /app/webapp .
 
+EXPOSE 8080
 CMD ["./webapp"]
 
