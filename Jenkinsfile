@@ -54,14 +54,15 @@ pipeline {
                             checkout scm
                         }
 
-                        stage('Build image') {
+                        stage(' image') {
                             echo "Building docker image..."
-                            sh "docker build . -t ${IMAGE}"
+
                             // app = docker.build("")
                         }
 
-                        stage('Push image') {
+                        stage('Build and Push image') {
                             script {
+                                def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'"
                                 sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
                                 docker.withRegistry(ECRURL, ECRCRED) {
                                     docker.image(IMAGE).push()
