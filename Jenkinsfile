@@ -101,10 +101,9 @@ pipeline {
         always
         {
             sh "docker image prune -fa"
-            deleteDir()
+            // deleteDir()
         }
     }
-
 }
 
 def getDockerTag() {
