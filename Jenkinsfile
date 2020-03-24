@@ -12,28 +12,28 @@ pipeline {
     }
     agent any
     stages {
-        stage('Build') {
-            agent {
-                docker {
-                    image 'golang:alpine'
-                }
-            }
-            steps {
-                // def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
-                // withEnv(["DOCKER=${dockerTool}/bin"]) {
-                    //stages
-                    //now we can simply call: dockerCmd 'run mycontainer'
+        // stage('Build') {
+        //     agent {
+        //         docker {
+        //             image 'golang:alpine'
+        //         }
+        //     }
+        //     steps {
+        //         // def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
+        //         // withEnv(["DOCKER=${dockerTool}/bin"]) {
+        //             //stages
+        //             //now we can simply call: dockerCmd 'run mycontainer'
 
-                    // Create our project directory.
-                    sh 'cd ${GOPATH}/src'
-                    sh 'mkdir -p ${GOPATH}/src/hello-world'
-                    // Copy all files in our Jenkins workspace to our project directory.
-                    sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
-                    // Build the app.
-                    sh 'go build -o webapp'
-                // }
-            }
-        }
+        //             // Create our project directory.
+        //             sh 'cd ${GOPATH}/src'
+        //             sh 'mkdir -p ${GOPATH}/src/hello-world'
+        //             // Copy all files in our Jenkins workspace to our project directory.
+        //             sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+        //             // Build the app.
+        //             sh 'go build -o webapp'
+        //         // }
+        //     }
+        // }
 
         stage('Docker') {
             steps{
@@ -49,7 +49,7 @@ pipeline {
 
                                 sh "docker build . -t ${IMAGE}"
                                 echo "docker build . -t ${IMAGE}"
-                                def IMAGE_ID = sh script: "\$(sudo docker images --filter=reference=image_name --format \"{{.ID}}\""
+                                def IMAGE_ID = sh script: "\$(sudo docker images --filter=reference=image_name --format \"{{.ID}}\")", returnStdout: true
                                 echo "${IMAGE_ID}"
                                 sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
 
