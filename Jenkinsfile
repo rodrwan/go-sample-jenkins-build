@@ -33,9 +33,11 @@ pipeline {
         }
 
         stage('Registry push'){
-            scripts{
-                docker.withRegistry(ECRURL, ECRCRED) {
-                    docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
+            steps{
+                scripts{
+                    docker.withRegistry(ECRURL, ECRCRED) {
+                        docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
+                    }
                 }
             }
         }
