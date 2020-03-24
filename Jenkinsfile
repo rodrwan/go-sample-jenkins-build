@@ -1,19 +1,3 @@
-node() {
-    def root = tool name: 'Go 1.9', type: 'go'
-    // Export environment variables pointing to the directory where Go was installed
-    withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-        sh 'go version'
-    }
-
-    stages {
-        stage ('Compile') {
-            steps{
-                sh "${root}/bin/go build -o ${APP_NAME}"
-            }
-        }
-    }
-}
-
 pipeline {
     agent any
     environment{
@@ -25,6 +9,22 @@ pipeline {
     }
 
     stages {
+        stage('Build') {
+            agent {
+                docker {
+                    image 'golang'
+                }
+            }
+            steps {
+                // Create our project directory.
+                sh 'cd ${GOPATH}/src'
+                sh 'mkdir -p ${GOPATH}/src/hello-world'
+                // Copy all files in our Jenkins workspace to our project directory.
+                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+                // Build the app.
+                sh 'go build'
+            }
+        }
         stage('Build Docker Image'){
             steps{
                 sh "docker build -t ${IMAGE} ."

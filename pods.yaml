@@ -7,6 +7,6 @@ metadata:
 spec:
   containers:
     - name: goapp
-      image: repositoryUrl/go-sample-jenkins-build:tagVersion
+      image: repositoryUrl/webapp:tagVersion
       ports:
         - containerPort: 8080
