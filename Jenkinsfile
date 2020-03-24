@@ -57,12 +57,15 @@ pipeline {
                         stage('Build image') {
                             echo "Building docker image..."
                             sh "docker build . -t ${IMAGE}"
-                            sh $(aws ecr login)
+
                             app = docker.build("")
                         }
 
                         stage('Push image') {
+                            sh("eval $(aws ecr get-login --no-include-email | sed 's|https://||')")
                             // Use the Credential ID of the Docker Hub Credentials we added to Jenkins.
+                            sh "docker push ${REGISTRY_URL}"
+
                             docker.withRegistry(ECRURL, ECRCRED) {
                                 // Push image and tag it with our build number for versioning purposes.
                                 app.push("${IMAGE}")
