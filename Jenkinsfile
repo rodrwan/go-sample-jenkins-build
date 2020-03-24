@@ -2,7 +2,7 @@
 
 pipeline {
     environment{
-        DOCKER_TAG = getDockerTag() | tr -d '\r'
+        DOCKER_TAG = getDockerTag()
         APP_NAME = "webapp"
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
@@ -97,6 +97,6 @@ pipeline {
 }
 
 def getDockerTag() {
-    def tag = sh script: 'git rev-parse HEAD', returnStdout: true
+    def tag = sh script: "git rev-parse HEAD | tr -d '\r'" , returnStdout: true
     return tag
 }
