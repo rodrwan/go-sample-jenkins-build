@@ -48,30 +48,21 @@ pipeline {
                 // Use a scripted pipeline.
                 script {
                     node {
-                        def app
-
                         stage('Clone repository') {
                             checkout scm
                         }
 
-                        stage(' image') {
-                            echo "Building docker image..."
-
-                            // app = docker.build("")
-                        }
-
                         stage('Build and Push image') {
-                            script {
-                                def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'", returnStdout: true
-                                echo "${imageID}"
-                                sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
-                                echo "docker tag ${IMAGE} ${IMAGE}"
-                                sh "docker tag ${IMAGE} ${IMAGE}"
-                                docker.withRegistry(ECRURL, ECRCRED) {
-                                    echo "docker push ${IMAGE}"
-                                    sh "docker push ${IMAGE}"
-                                //     docker.image(IMAGE).push()
-                                }
+                            echo "Building docker image..."
+                            def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'", returnStdout: true
+                            echo "${imageID}"
+                            sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
+                            echo "docker tag ${IMAGE} ${IMAGE}"
+                            sh "docker tag ${IMAGE} ${IMAGE}"
+                            docker.withRegistry(ECRURL, ECRCRED) {
+                                echo "docker push ${IMAGE}"
+                                sh "docker push ${IMAGE}"
+                            //     docker.image(IMAGE).push()
                             }
                         }
                     }
