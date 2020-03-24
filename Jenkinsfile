@@ -8,7 +8,7 @@ pipeline {
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
-        IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
+        IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} ."
     }
 
     stages {
@@ -73,22 +73,22 @@ pipeline {
             }
         }
 
-        stage('Deploy to k8s'){
-            steps{
-                sh "chmod +x changeTag.sh"
-                sg "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
-                sshagent(['']){
-                    sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
-                    script {
-                        try{
-                            sh "ssh ${AWS_INSTANCE_URL} kubectl apply -f ."
-                        }catch(error){
-                            sh "ssh ${AWS_INSTANCE_DIRECTORY} kubectl create -f ."
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Deploy to k8s'){
+        //     steps{
+        //         sh "chmod +x changeTag.sh"
+        //         sg "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
+        //         sshagent(['']){
+        //             sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
+        //             script {
+        //                 try{
+        //                     sh "ssh ${AWS_INSTANCE_URL} kubectl apply -f ."
+        //                 }catch(error){
+        //                     sh "ssh ${AWS_INSTANCE_DIRECTORY} kubectl create -f ."
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     post
