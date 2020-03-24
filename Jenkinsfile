@@ -37,7 +37,7 @@ pipeline {
             }
         }
 
-        stage('Initialize'){
+        stage('Initialize2'){
             steps{
                 script{
                     def dockerHome = tool 'mydocker'
