@@ -31,8 +31,10 @@ pipeline {
             }
         }
         stage('Registry push'){
-            docker.withRegistry(ECRURL, ECRCRED) {
-                docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
+            steps{
+                docker.withRegistry(ECRURL, ECRCRED) {
+                    docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
+                }
             }
         }
         stage('Deploy to k8s'){
