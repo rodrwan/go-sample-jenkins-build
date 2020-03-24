@@ -58,7 +58,7 @@ pipeline {
                             echo "Building docker image..."
                             sh "docker build . -t ${IMAGE}"
 
-                            app = docker.build("")
+                            // app = docker.build("")
                         }
 
                         stage('Push image') {
@@ -66,13 +66,13 @@ pipeline {
                             // Use the Credential ID of the Docker Hub Credentials we added to Jenkins.
                             sh "docker push ${REGISTRY_URL}"
 
-                            docker.withRegistry(ECRURL, ECRCRED) {
+                            // docker.withRegistry(ECRURL, ECRCRED) {
                                 // Push image and tag it with our build number for versioning purposes.
-                                app.push("${IMAGE}")
+                                // app.push("${IMAGE}")
 
                                 // Push the same image and tag it as the latest version (appears at the top of our version list).
-                                app.push("latest")
-                            }
+                                // app.push("latest")
+                            // }
                         }
                     }
                 }
