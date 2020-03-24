@@ -62,7 +62,7 @@ pipeline {
 
                         stage('Build and Push image') {
                             script {
-                                def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'"
+                                def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'", returnStdout: true
                                 echo "${imageID}"
                                 sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
                                 docker.withRegistry(ECRURL, ECRCRED) {
@@ -70,13 +70,6 @@ pipeline {
                                 //     docker.image(IMAGE).push()
                                 }
                             }
-                            // docker.withRegistry(ECRURL, ECRCRED) {
-                                // Push image and tag it with our build number for versioning purposes.
-                                // app.push("${IMAGE}")
-
-                                // Push the same image and tag it as the latest version (appears at the top of our version list).
-                                // app.push("latest")
-                            // }
                         }
                     }
                 }
