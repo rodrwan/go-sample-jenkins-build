@@ -19,8 +19,8 @@ pipeline {
                 }
             }
             steps {
-                def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
-                withEnv(["DOCKER=${dockerTool}/bin"]) {
+                // def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
+                // withEnv(["DOCKER=${dockerTool}/bin"]) {
                     //stages
                     //now we can simply call: dockerCmd 'run mycontainer'
 
@@ -31,7 +31,7 @@ pipeline {
                     sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                     // Build the app.
                     sh 'go build -o webapp'
-                }
+                // }
             }
         }
 
