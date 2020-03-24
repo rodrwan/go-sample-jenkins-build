@@ -2,7 +2,7 @@
 
 pipeline {
     environment{
-        DOCKER_TAG = getDockerTag()
+        DOCKER_TAG = getDockerTag() | tr -d '\r'
         APP_NAME = "webapp"
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
