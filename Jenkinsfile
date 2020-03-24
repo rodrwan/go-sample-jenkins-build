@@ -10,12 +10,15 @@ pipeline {
     stages {
         stage('Build application'){
             // Install the desired Go version
-            def root = tool name: 'Go 1.8', type: 'go'
+            node() {
+                def root = tool name: 'Go 1.9', type: 'go'
 
-            // Export environment variables pointing to the directory where Go was installed
-            withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
-                sh "go version"
-                sh "go build -o ${APP_NAME}"
+                stage('Preparation') {
+                    checkout scm
+                }
+                stage ('Compile') {
+                    sh "${root}/bin/go build -o ${APP_NAME}"
+                }
             }
         }
         stage('Build Docker Image'){
