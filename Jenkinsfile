@@ -1,8 +1,16 @@
 node() {
     def root = tool name: 'Go 1.9', type: 'go'
+    // Export environment variables pointing to the directory where Go was installed
+    withEnv(["GOROOT=${root}", "PATH+GO=${root}/bin"]) {
+        sh 'go version'
+    }
 
-    stage ('Compile') {
-        sh "${root}/bin/go build -o ${APP_NAME}"
+    stages {
+        stage ('Compile') {
+            steps{
+                sh "${root}/bin/go build -o ${APP_NAME}"
+            }
+        }
     }
 }
 
@@ -15,6 +23,7 @@ pipeline {
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
+
     stages {
         stage('Build Docker Image'){
             steps{
@@ -43,6 +52,7 @@ pipeline {
             }
         }
     }
+
     post
     {
         always
