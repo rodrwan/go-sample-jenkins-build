@@ -49,8 +49,10 @@ pipeline {
                                 sh "docker build . -t ${IMAGE}"
                                 echo "docker build . -t ${IMAGE}"
                                 sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
-                                sh "docker tag ${IMAGE} ${IMAGE}"
+
                                 echo "docker tag ${IMAGE} ${IMAGE}"
+                                sh "docker tag ${IMAGE} ${IMAGE}"
+
                                 docker.withRegistry(ECRURL, ECRCRED) {
                                     echo "docker push ${IMAGE}"
                                     sh "docker push ${IMAGE}"
