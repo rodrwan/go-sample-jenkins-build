@@ -63,7 +63,7 @@ pipeline {
 
                         stage('Push image') {
                             script{
-                                sh("eval $(aws ecr get-login --no-include-email | sed 's|https://||')")
+                                sh "eval $(aws ecr get-login --no-include-email | sed 's|https://||')"
                                 // Use the Credential ID of the Docker Hub Credentials we added to Jenkins.
                                 sh "docker push ${REGISTRY_URL}"
                             }
