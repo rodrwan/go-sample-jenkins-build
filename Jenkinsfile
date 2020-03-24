@@ -11,7 +11,10 @@ pipeline {
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
 
-    tools { docker "mydocker"}
+    tools {
+        org.jenkinsci.plugins.docker.commons.tools.DockerTool "mydocker"
+        go "mygo"
+    }
     stages {
         stage('Build') {
             agent {
