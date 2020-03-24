@@ -62,7 +62,7 @@ pipeline {
                             // Use the Credential ID of the Docker Hub Credentials we added to Jenkins.
                             docker.withRegistry(ECRURL, ECRCRED) {
                                 // Push image and tag it with our build number for versioning purposes.
-                                app.push("${env.BUILD_NUMBER}")
+                                app.push("${IMAGE}")
 
                                 // Push the same image and tag it as the latest version (appears at the top of our version list).
                                 app.push("latest")
@@ -72,16 +72,6 @@ pipeline {
                 }
             }
         }
-
-        // stage('Registry push'){
-        //     steps{
-        //         script{
-        //             docker.withRegistry(ECRURL, ECRCRED) {
-        //                 docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Deploy to k8s'){
             steps{
@@ -105,8 +95,6 @@ pipeline {
     {
         always
         {
-            // make sure that the Docker image is removed
-            // sh "docker rmi ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} | true"
             sh "docker image prune -fa"
             deleteDir()
         }
