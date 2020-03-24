@@ -55,7 +55,7 @@ pipeline {
                         }
 
                         stage('Build image') {
-                            app = docker.build("${IMAGE} .")
+                            app = docker.build("${IMAGE}", ".")
                         }
 
                         stage('Push image') {
