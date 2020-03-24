@@ -55,7 +55,9 @@ pipeline {
                         }
 
                         stage('Build image') {
-                            app = docker.build("${IMAGE}", "--build-arg x=y .")
+                            echo "Building docker image..."
+                            sh "docker build -t ${IMAGE} ."
+                            app = docker.build("")
                         }
 
                         stage('Push image') {
