@@ -35,16 +35,7 @@ pipeline {
         }
 
         stage('Docker') {
-            // environment {
-                // Extract the username and password of our credentials into "DOCKER_CREDENTIALS_USR" and "DOCKER_CREDENTIALS_PSW".
-                // (NOTE 1: DOCKER_CREDENTIALS will be set to "your_username:your_password".)
-                // The new variables will always be YOUR_VARIABLE_NAME + _USR and _PSW.
-                // (NOTE 2: You can't print credentials in the pipeline for security reasons.)
-                // DOCKER_CREDENTIALS = credentials('my-docker-credentials-id')
-            // }
-
             steps{
-                // Use a scripted pipeline.
                 script {
                     node {
                         stage('Clone repository') {
@@ -56,10 +47,7 @@ pipeline {
 
                             sh "docker build . -t ${IMAGE}"
                             echo "docker build . -t ${IMAGE}"
-                            // def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'"
-                            // echo "${imageID}"
-
-                            sh "eval \$(aws ecr get-login --no-include-email | sed 's|https://||')"
+                            sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
                             sh "docker tag ${IMAGE} ${IMAGE}"
                             echo "docker tag ${IMAGE} ${IMAGE}"
                             docker.withRegistry(ECRURL, ECRCRED) {
