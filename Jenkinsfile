@@ -18,7 +18,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps{
-                sh "docker build -t ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
+                sh "docker build -t ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} ."
             }
         }
         stage('Registry push') {
