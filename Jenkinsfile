@@ -8,7 +8,7 @@ pipeline {
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
-        IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} ."
+        IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
 
     stages {
@@ -55,7 +55,7 @@ pipeline {
                         }
 
                         stage('Build image') {
-                            app = docker.build("${IMAGE}")
+                            app = docker.build("${IMAGE} .")
                         }
 
                         stage('Push image') {
