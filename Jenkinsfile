@@ -8,7 +8,7 @@ pipeline {
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
     stages {
-        stage('Build application') {
+        stage('Build application'){
             // Install the desired Go version
             def root = tool name: 'Go 1.12', type: 'go'
 
@@ -17,21 +17,21 @@ pipeline {
                 sh "go build -o ${APP_NAME}"
             }
         }
-        stage('Build Docker Image') {
+        stage('Build Docker Image'){
             steps{
                 sh "docker build -t ${IMAGE} ."
             }
         }
-        stage('Registry push') {
+        stage('Registry push'){
             docker.withRegistry(ECRURL, ECRCRED) {
-                docker.image(${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}).push()
+                docker.image("${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}").push()
             }
         }
-        stage('Deploy to k8s') {
+        stage('Deploy to k8s'){
             steps{
                 sh "chmod +x changeTag.sh"
                 sg "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
-                sshagent(['']) {
+                sshagent(['']){
                     sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
                     script {
                         try{
