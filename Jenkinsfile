@@ -12,8 +12,8 @@ pipeline {
     }
 
     tools {
-        org.jenkinsci.plugins.docker.commons.tools.DockerTool "mydocker"
-        go "mygo"
+        org.jenkinsci.plugins.docker.commons.tools.DockerTool
+        go
     }
     stages {
         stage('Build') {
