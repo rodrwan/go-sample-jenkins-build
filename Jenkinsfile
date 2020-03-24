@@ -13,16 +13,17 @@ pipeline {
 
     stages {
         stage('Build') {
-            def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
-            withEnv(["DOCKER=${dockerTool}/bin"]) {
-            //stages
-            //now we can simply call: dockerCmd 'run mycontainer'
-                agent {
-                    docker {
-                        image 'golang'
-                    }
+            agent {
+                docker {
+                    image 'golang'
                 }
-                steps {
+            }
+            steps {
+                def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
+                withEnv(["DOCKER=${dockerTool}/bin"]) {
+                    //stages
+                    //now we can simply call: dockerCmd 'run mycontainer'
+
                     // Create our project directory.
                     sh 'cd ${GOPATH}/src'
                     sh 'mkdir -p ${GOPATH}/src/hello-world'
