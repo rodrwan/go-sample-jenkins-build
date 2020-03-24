@@ -64,7 +64,7 @@ pipeline {
                             script {
                                 sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
                                 docker.withRegistry(ECRURL, ECRCRED) {
-                                    docker.image(IMAGE).pull()
+                                    docker.image(IMAGE).push()
                                 }
                             }
                             // docker.withRegistry(ECRURL, ECRCRED) {
