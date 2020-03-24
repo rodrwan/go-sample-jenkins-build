@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: goapp
+  labels:
+    app: goapp
+spec:
+  containers:
+    - name: goapp
+      image: repositoryUrl/go-sample-jenkins-build:tagVersion
+      ports:
+        - containerPort: 8080
