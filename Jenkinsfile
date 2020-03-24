@@ -1,7 +1,6 @@
 #!/usr/bin/env groovy
 
 pipeline {
-    agent any
     environment{
         DOCKER_TAG = getDockerTag()
         APP_NAME = "webapp"
@@ -10,7 +9,7 @@ pipeline {
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
-
+    agent any
     stages {
         stage('Build') {
             agent {
@@ -54,10 +53,13 @@ pipeline {
 
                         stage('Build and Push image') {
                             echo "Building docker image..."
-                            def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'", returnStdout: true
-                            echo "${imageID}"
-                            sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
                             echo "docker tag ${IMAGE} ${IMAGE}"
+                            echo "docker push ${IMAGE}"
+
+                            def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'"
+                            echo "${imageID}"
+
+                            sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
                             sh "docker tag ${IMAGE} ${IMAGE}"
                             docker.withRegistry(ECRURL, ECRCRED) {
                                 echo "docker push ${IMAGE}"
