@@ -53,14 +53,15 @@ pipeline {
 
                         stage('Build and Push image') {
                             echo "Building docker image..."
-                            echo "docker tag ${IMAGE} ${IMAGE}"
-                            echo "docker push ${IMAGE}"
 
-                            def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'"
-                            echo "${imageID}"
+                            sh "docker build . -t ${IMAGE}"
+                            echo "docker build . -t ${IMAGE}"
+                            // def imageID = sh script: "\$(docker build . -q -t ${IMAGE}  2>/dev/null | awk '/Successfully built/{print $NF}'"
+                            // echo "${imageID}"
 
-                            sh("eval \$(aws ecr get-login --no-include-email | sed 's|https://||')")
+                            sh "eval \$(aws ecr get-login --no-include-email | sed 's|https://||')"
                             sh "docker tag ${IMAGE} ${IMAGE}"
+                            echo "docker tag ${IMAGE} ${IMAGE}"
                             docker.withRegistry(ECRURL, ECRCRED) {
                                 echo "docker push ${IMAGE}"
                                 sh "docker push ${IMAGE}"
