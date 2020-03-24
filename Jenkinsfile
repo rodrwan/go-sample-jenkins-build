@@ -56,7 +56,7 @@ pipeline {
 
                         stage('Build image') {
                             echo "Building docker image..."
-                            sh "docker build -t ${IMAGE} ."
+                            sh "docker build . -t ${IMAGE}"
                             app = docker.build("")
                         }
 
