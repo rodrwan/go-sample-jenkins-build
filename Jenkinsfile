@@ -25,11 +25,13 @@ pipeline {
                 sh 'go build -o webapp'
             }
         }
+
         stage('Build Docker Image'){
             steps{
                 sh "docker build -t ${IMAGE} ."
             }
         }
+
         stage('Registry push'){
             steps{
                 docker.withRegistry(ECRURL, ECRCRED) {
@@ -37,6 +39,7 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to k8s'){
             steps{
                 sh "chmod +x changeTag.sh"
