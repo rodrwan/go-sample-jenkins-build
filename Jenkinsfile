@@ -22,7 +22,7 @@ pipeline {
                 // Copy all files in our Jenkins workspace to our project directory.
                 sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
                 // Build the app.
-                sh 'go build'
+                sh 'go build -o webapp'
             }
         }
         stage('Build Docker Image'){
@@ -32,7 +32,7 @@ pipeline {
         }
         stage('Registry push'){
             docker.withRegistry(ECRURL, ECRCRED) {
-                docker.image("${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}").push()
+                docker.image("${REGISTRY_URL}/webapp:${DOCKER_TAG}").push()
             }
         }
         stage('Deploy to k8s'){
