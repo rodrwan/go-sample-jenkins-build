@@ -57,7 +57,7 @@ pipeline {
                         stage('Build image') {
                             echo "Building docker image..."
                             sh "docker build . -t ${IMAGE}"
-                            sh "$(aws ecr login)"
+                            sh $(aws ecr login)
                             app = docker.build("")
                         }
 
