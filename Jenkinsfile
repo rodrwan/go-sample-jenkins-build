@@ -11,25 +11,26 @@ pipeline {
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
 
-    tools {
-        org.jenkinsci.plugins.docker.commons.tools.DockerTool
-        go
-    }
     stages {
         stage('Build') {
-            agent {
-                docker {
-                    image 'golang'
+            def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
+            withEnv(["DOCKER=${dockerTool}/bin"]) {
+            //stages
+            //now we can simply call: dockerCmd 'run mycontainer'
+                agent {
+                    docker {
+                        image 'golang'
+                    }
                 }
-            }
-            steps {
-                // Create our project directory.
-                sh 'cd ${GOPATH}/src'
-                sh 'mkdir -p ${GOPATH}/src/hello-world'
-                // Copy all files in our Jenkins workspace to our project directory.
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
-                // Build the app.
-                sh 'go build -o webapp'
+                steps {
+                    // Create our project directory.
+                    sh 'cd ${GOPATH}/src'
+                    sh 'mkdir -p ${GOPATH}/src/hello-world'
+                    // Copy all files in our Jenkins workspace to our project directory.
+                    sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
+                    // Build the app.
+                    sh 'go build -o webapp'
+                }
             }
         }
 
