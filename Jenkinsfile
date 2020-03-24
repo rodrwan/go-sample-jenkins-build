@@ -49,7 +49,7 @@ pipeline {
 
                                 sh "docker build . -t ${IMAGE}"
                                 echo "docker build . -t ${IMAGE}"
-                                def IMAGE_ID = sh script: "\$(sudo docker images --filter=reference=image_name --format \"{{.ID}}\")", returnStdout: true
+                                def IMAGE_ID = sh script: "\$(docker images --filter=reference=${IMAGE} --format \"{{.ID}}\")", returnStdout: true
                                 echo "${IMAGE_ID}"
                                 sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
 
