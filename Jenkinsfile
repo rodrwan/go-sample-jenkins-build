@@ -5,6 +5,7 @@ pipeline {
         APP_NAME = "webapp"
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
+        IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
     }
     stages {
         stage('Build application') {
@@ -18,7 +19,7 @@ pipeline {
         }
         stage('Build Docker Image') {
             steps{
-                sh "docker build -t ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} ."
+                sh "docker build -t ${IMAGE} ."
             }
         }
         stage('Registry push') {
