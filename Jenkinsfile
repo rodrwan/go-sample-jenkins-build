@@ -8,6 +8,7 @@ pipeline {
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
         IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG}"
+        TAG = "${IMAGE} ${IMAGE}"
     }
     agent any
     stages {
@@ -50,8 +51,8 @@ pipeline {
                                 echo "docker build . -t ${IMAGE}"
                                 sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
 
-                                echo "docker tag ${IMAGE} ${IMAGE}"
-                                sh "docker tag ${IMAGE} ${IMAGE}"
+                                echo "docker tag ${TAG}"
+                                sh "docker tag ${TAG}"
 
                                 docker.withRegistry(ECRURL, ECRCRED) {
                                     echo "docker push ${IMAGE}"
