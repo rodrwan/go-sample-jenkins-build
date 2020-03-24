@@ -67,6 +67,12 @@ pipeline {
                 }
             }
         }
+        stage(‘Docker Purge’) {
+            steps {
+                sh ‘docker image prune -fa’
+                deleteDir()
+            }
+        }
     }
 
     post
@@ -77,6 +83,7 @@ pipeline {
             sh "docker rmi ${REGISTRY_URL}/go-sample-jenkins-build:${DOCKER_TAG} | true"
         }
     }
+
 }
 
 def getDockerTag() {
