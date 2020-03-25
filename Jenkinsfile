@@ -51,9 +51,9 @@ pipeline {
                     sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY}"
                     script {
                         try{
-                            sh "ssh ${AWS_INSTANCE_URL} kubectl apply -f ."
+                            sh "ssh kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY} kubectl apply -f ."
                         }catch(error){
-                            sh "ssh ${AWS_INSTANCE_DIRECTORY} kubectl create -f ."
+                            sh "ssh kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY} kubectl create -f ."
                         }
                     }
                 }
