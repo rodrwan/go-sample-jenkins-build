@@ -60,7 +60,6 @@ pipeline {
                     sh "export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}"
                     sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
                     sh "export AWS_REGION=sa-east-1"
-                    sh "aws configure "
                     sh "aws eks update-kubeconfig --name basic-cluster"
                     script {
                         try{
