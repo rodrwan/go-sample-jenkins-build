@@ -47,7 +47,7 @@ pipeline {
                 sh "chmod +x changeTag.sh"
                 sh "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
 
-                sshagent(credentials: ['kube-user']){
+                sshagent(credentials: 'kube-user'){
                     sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
                     script {
                         try{
