@@ -22,15 +22,16 @@ pipeline {
                             checkout scm
                         }
 
-                        stage('Build and Push image') {
+                        stage('Build Docker image') {
+                            echo "Building docker image..."
+
+                            sh "docker build . -t ${IMAGE}"
+                            sh "docker tag ${TAG}"
+                        }
+
+                        stage('Push image') {
                             withAWS(credentials: 'registry-jenkins-user') {
-                                echo "Building docker image..."
-
-                                sh "docker build . -t ${IMAGE}"
                                 sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
-
-                                sh "docker tag ${TAG}"
-
                                 docker.withRegistry(ECRURL, ECRCRED) {
                                     sh "docker push ${REGISTRY_URL}:${DOCKER_TAG}"
                                 }
@@ -42,11 +43,15 @@ pipeline {
             }
         }
 
-        stage('Deploy to k8s'){
+        stage('update k8s build files'){
             steps{
                 sh "chmod +x changeTag.sh"
                 sh "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
+            }
+        }
 
+        stage('Deploy to k8s'){
+            steps{
                 withAWS(credentials: 'kube-user') {
                     sh "aws eks update-kubeconfig --name basic-cluster"
                     script {
