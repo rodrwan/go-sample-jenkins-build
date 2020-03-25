@@ -5,6 +5,9 @@ metadata:
   labels:
     app: webapp
 spec:
+  selector:
+    matchLebels:
+      app: webapp
   template:
     metadata:
       labels:
@@ -14,6 +17,7 @@ spec:
       containers:
       - name: webapp
         image: repositoryUrl/webapp:tagVersion
+        imagePullPolicy: Always
         resources:
           requests:
             cpu: 50m
