@@ -16,7 +16,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: webapp
-        image: repositoryUrl/webapp:tagVersion
+        image: repositoryUrl/tagVersion
         imagePullPolicy: Always
         resources:
           requests:
