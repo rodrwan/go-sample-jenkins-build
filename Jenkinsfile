@@ -47,16 +47,26 @@ pipeline {
                 sh "chmod +x changeTag.sh"
                 sh "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
 
-                sshagent(credentials: ['kube-user']){
-                    sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY}"
+                withAWS(credentials: 'kube-user') {
+                    sh "aws eks update-kubeconfig --name basic-cluster"
                     script {
                         try{
-                            sh "ssh kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY} kubectl apply -f ."
+                            sh "kubectl apply -f ."
                         }catch(error){
-                            sh "ssh kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY} kubectl create -f ."
+                            sh "kubectl create -f ."
                         }
                     }
                 }
+                // sshagent(credentials: ['kube-user']){
+                //     sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY}"
+                //     script {
+                //         try{
+                //             sh "ssh kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY} kubectl apply -f ."
+                //         }catch(error){
+                //             sh "ssh kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY} kubectl create -f ."
+                //         }
+                //     }
+                // }
             }
         }
     }
