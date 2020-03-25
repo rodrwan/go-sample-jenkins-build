@@ -7,79 +7,59 @@ pipeline {
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
         ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
-        IMAGE = "${REGISTRY_URL}/go-sample-jenkins-build"
+        IMAGE = "webapp"
         LATEST = "${REGISTRY_URL}:${DOCKER_TAG}"
         TAG = "${IMAGE} ${LATEST}"
     }
     agent any
     stages {
-        // stage('Build') {
-        //     agent {
-        //         docker {
-        //             image 'golang:alpine'
-        //         }
-        //     }
-        //     steps {
-        //         // def dockerTool = tool name: 'docker', type: 'org.jenkinsci.plugins.docker.commons.tools.DockerTool'
-        //         // withEnv(["DOCKER=${dockerTool}/bin"]) {
-        //             //stages
-        //             //now we can simply call: dockerCmd 'run mycontainer'
-
-        //             // Create our project directory.
-        //             sh 'cd ${GOPATH}/src'
-        //             sh 'mkdir -p ${GOPATH}/src/hello-world'
-        //             // Copy all files in our Jenkins workspace to our project directory.
-        //             sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/hello-world'
-        //             // Build the app.
-        //             sh 'go build -o webapp'
-        //         // }
-        //     }
-        // }
-
-        stage('Docker') {
-            steps{
-                script {
-                    node {
-                        stage('Clone repository') {
-                            checkout scm
-                        }
-
-                        stage('Build and Push image') {
-                            withAWS(credentials: 'registry-jenkins-user') {
-                                echo "Building docker image..."
-
-                                sh "docker build . -t ${IMAGE}"
-                                sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
-
-                                sh "docker tag ${TAG}"
-
-                                docker.withRegistry(ECRURL, ECRCRED) {
-                                    sh "docker push ${REGISTRY_URL}:${DOCKER_TAG}"
-                                }
-                            }
-
-                        }
-                    }
-                }
-            }
-        }
-
-        // stage('Deploy to k8s'){
+        // stage('Docker') {
         //     steps{
-        //         sh "chmod +x changeTag.sh"
-        //         sg "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
-        //         sshagent(['']){
-        //             sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
-        //             script {
-        //                 try{
-        //                     sh "ssh ${AWS_INSTANCE_URL} kubectl apply -f ."
-        //                 }catch(error){
-        //                     sh "ssh ${AWS_INSTANCE_DIRECTORY} kubectl create -f ."
+        //         script {
+        //             node {
+        //                 stage('Clone repository') {
+        //                     checkout scm
+        //                 }
+
+        //                 stage('Build and Push image') {
+        //                     withAWS(credentials: 'registry-jenkins-user') {
+        //                         echo "Building docker image..."
+
+        //                         sh "docker build . -t ${IMAGE}"
+        //                         sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
+
+        //                         sh "docker tag ${TAG}"
+
+        //                         docker.withRegistry(ECRURL, ECRCRED) {
+        //                             sh "docker push ${REGISTRY_URL}:${DOCKER_TAG}"
+        //                         }
+        //                     }
+
         //                 }
         //             }
         //         }
         //     }
         // }
+
+        stage('Deploy to k8s'){
+            steps{
+                sh "chmod +x changeTag.sh"
+                sh "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
+                cat "app.yml"
+                cat "service.yml"
+
+                sshagent(credentials: ['kube-user']){
+                    sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
+                    script {
+                        try{
+                            sh "ssh ${AWS_INSTANCE_URL} kubectl apply -f ."
+                        }catch(error){
+                            sh "ssh ${AWS_INSTANCE_DIRECTORY} kubectl create -f ."
+                        }
+                    }
+                }
+            }
+        }
     }
 
     post
@@ -87,7 +67,7 @@ pipeline {
         always
         {
             sh "docker image prune -fa"
-            // deleteDir()
+            deleteDir()
         }
     }
 }
