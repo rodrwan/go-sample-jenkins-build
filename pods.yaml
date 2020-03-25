@@ -6,7 +6,7 @@ metadata:
     app: webapp
 spec:
   selector:
-    matchLebels:
+    matchLabels:
       app: webapp
   template:
     metadata:

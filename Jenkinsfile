@@ -61,8 +61,10 @@ pipeline {
                     sh "export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}"
                     sh "export AWS_DEFAULT_REGION=sa-east-1"
                     sh "aws eks update-kubeconfig --name basic-cluster --region=sa-east-1"
-
+                    sh "rm pods.yaml"
                     sh "cat app.yaml"
+
+                    sh "kubectl version --client"
                     script {
                         try{
                             sh "kubectl apply -f ."
