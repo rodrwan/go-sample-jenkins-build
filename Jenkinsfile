@@ -50,26 +50,26 @@ pipeline {
             }
         }
 
-        stage('Deploy to k8s'){
-            steps{
-                withCredentials([[
-                    $class: 'AmazonWebServicesCredentialsBinding',
-                    credentialsId: 'kube-user',
-                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-                ]]) {
-                    sh "aws configure aws_access_key_id=${AWS_ACCESS_KEY_ID} --aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
-                    sh "aws eks update-kubeconfig --name basic-cluster"
-                    script {
-                        try{
-                            sh "kubectl apply -f ."
-                        }catch(error){
-                            sh "kubectl create -f ."
-                        }
-                    }
-                }
-            }
-        }
+        // stage('Deploy to k8s'){
+        //     steps{
+        //         withCredentials([[
+        //             $class: 'AmazonWebServicesCredentialsBinding',
+        //             credentialsId: 'kube-user',
+        //             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+        //             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+        //         ]]) {
+        //             sh "aws configure aws_access_key_id=${AWS_ACCESS_KEY_ID} --aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
+        //             sh "aws eks update-kubeconfig --name basic-cluster"
+        //             script {
+        //                 try{
+        //                     sh "kubectl apply -f ."
+        //                 }catch(error){
+        //                     sh "kubectl create -f ."
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     }
 
     post
