@@ -1,12 +1,25 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: webapp
   labels:
     app: webapp
 spec:
-  containers:
-    - name: webapp
-      image: repositoryUrl/webapp:tagVersion
-      ports:
-        - containerPort: 8080
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: webapp
+        image: repositoryUrl/webapp:tagVersion
+        resources:
+          requests:
+            cpu: 50m
+            memory: 50Mi
+          limits:
+            cpu: 100m
+            memory: 100Mi
+        ports:
+          - containerPort: 8080
