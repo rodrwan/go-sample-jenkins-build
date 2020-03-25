@@ -5,12 +5,11 @@ pipeline {
         DOCKER_TAG = getDockerTag()
         APP_NAME = "webapp"
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
-        ECRCRED = "ecr:sa-east-1:registry-jenkins-user:/home/kube-user"
+        ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
         IMAGE = "webapp"
         LATEST = "${REGISTRY_URL}:${DOCKER_TAG}"
         TAG = "${IMAGE} ${LATEST}"
-        AWS_INSTANCE_URL_WITH_DIRECTORY = "ec2-18-229-255-200.sa-east-1.compute.amazonaws.com"
     }
     agent any
     stages {
@@ -43,33 +42,33 @@ pipeline {
             }
         }
 
-        stage('update k8s build files'){
+        stage('Update k8s build files'){
             steps{
                 sh "chmod +x changeTag.sh"
                 sh "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
             }
         }
 
-        // stage('Deploy to k8s'){
-        //     steps{
-        //         withCredentials([[
-        //             $class: 'AmazonWebServicesCredentialsBinding',
-        //             credentialsId: 'kube-user',
-        //             accessKeyVariable: 'AWS_ACCESS_KEY_ID',
-        //             secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
-        //         ]]) {
-        //             sh "aws configure aws_access_key_id=${AWS_ACCESS_KEY_ID} --aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
-        //             sh "aws eks update-kubeconfig --name basic-cluster"
-        //             script {
-        //                 try{
-        //                     sh "kubectl apply -f ."
-        //                 }catch(error){
-        //                     sh "kubectl create -f ."
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        stage('Deploy to k8s'){
+            steps{
+                withCredentials([[
+                    $class: 'AmazonWebServicesCredentialsBinding',
+                    credentialsId: 'kube-user',
+                    accessKeyVariable: 'AWS_ACCESS_KEY_ID',
+                    secretKeyVariable: 'AWS_SECRET_ACCESS_KEY'
+                ]]) {
+                    sh "aws configure aws_access_key_id=${AWS_ACCESS_KEY_ID} --aws_secret_access_key=${AWS_SECRET_ACCESS_KEY}"
+                    sh "aws eks update-kubeconfig --name basic-cluster"
+                    script {
+                        try{
+                            sh "kubectl apply -f ."
+                        }catch(error){
+                            sh "kubectl create -f ."
+                        }
+                    }
+                }
+            }
+        }
     }
 
     post
