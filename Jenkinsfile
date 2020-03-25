@@ -14,33 +14,33 @@ pipeline {
     }
     agent any
     stages {
-        // stage('Docker') {
-        //     steps{
-        //         script {
-        //             node {
-        //                 stage('Clone repository') {
-        //                     checkout scm
-        //                 }
+        stage('Docker') {
+            steps{
+                script {
+                    node {
+                        stage('Clone repository') {
+                            checkout scm
+                        }
 
-        //                 stage('Build and Push image') {
-        //                     withAWS(credentials: 'registry-jenkins-user') {
-        //                         echo "Building docker image..."
+                        stage('Build and Push image') {
+                            withAWS(credentials: 'registry-jenkins-user') {
+                                echo "Building docker image..."
 
-        //                         sh "docker build . -t ${IMAGE}"
-        //                         sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
+                                sh "docker build . -t ${IMAGE}"
+                                sh "eval \$(aws ecr get-login --no-include-email --region sa-east-1 | sed 's|https://||')"
 
-        //                         sh "docker tag ${TAG}"
+                                sh "docker tag ${TAG}"
 
-        //                         docker.withRegistry(ECRURL, ECRCRED) {
-        //                             sh "docker push ${REGISTRY_URL}:${DOCKER_TAG}"
-        //                         }
-        //                     }
+                                docker.withRegistry(ECRURL, ECRCRED) {
+                                    sh "docker push ${REGISTRY_URL}:${DOCKER_TAG}"
+                                }
+                            }
 
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+                        }
+                    }
+                }
+            }
+        }
 
         stage('Deploy to k8s'){
             steps{
