@@ -5,7 +5,7 @@ pipeline {
         DOCKER_TAG = getDockerTag()
         APP_NAME = "webapp"
         ECRURL = "https://864798405299.dkr.ecr.sa-east-1.amazonaws.com"
-        ECRCRED = "ecr:sa-east-1:registry-jenkins-user"
+        ECRCRED = "ecr:sa-east-1:registry-jenkins-user:/home/kube-user"
         REGISTRY_URL = "864798405299.dkr.ecr.sa-east-1.amazonaws.com/dale-repo"
         IMAGE = "webapp"
         LATEST = "${REGISTRY_URL}:${DOCKER_TAG}"
@@ -48,7 +48,7 @@ pipeline {
                 sh "./changeTag.sh ${DOCKER_TAG} ${REGISTRY_URL}"
 
                 sshagent(credentials: ['kube-user']){
-                    sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml ${AWS_INSTANCE_URL_WITH_DIRECTORY}"
+                    sh "scp -o StrictHostKeyChecking=no service.yaml app.yaml kube-user@${AWS_INSTANCE_URL_WITH_DIRECTORY}"
                     script {
                         try{
                             sh "ssh ${AWS_INSTANCE_URL} kubectl apply -f ."
