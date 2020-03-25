@@ -10,7 +10,7 @@ pipeline {
         IMAGE = "webapp"
         LATEST = "${REGISTRY_URL}:${DOCKER_TAG}"
         TAG = "${IMAGE} ${LATEST}"
-        AWS_INSTANCE_URL_WITH_DIRECTORY = "96668EE74E9EE5F9D383CFF09FCF9C66.sk1.sa-east-1.eks.amazonaws.com"
+        AWS_INSTANCE_URL_WITH_DIRECTORY = "ec2-18-229-255-200.sa-east-1.compute.amazonaws.com"
     }
     agent any
     stages {
