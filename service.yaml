@@ -1,10 +1,10 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: goapp
+  name: webapp
 spec:
   selector:
-    app: goapp
+    app: webapp
   ports:
   - protocol: TCP
     port: 80

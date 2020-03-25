@@ -1,12 +1,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: goapp
+  name: webapp
   labels:
-    app: goapp
+    app: webapp
 spec:
   containers:
-    - name: goapp
+    - name: webapp
       image: repositoryUrl/webapp:tagVersion
       ports:
         - containerPort: 8080
