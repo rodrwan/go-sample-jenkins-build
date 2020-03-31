@@ -4,5 +4,5 @@ cosas necesaria para correr el pipeline
 
 - aws
 - docker
-- jenkins
+- kubectl
 
